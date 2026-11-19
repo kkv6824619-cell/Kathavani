@@ -1,0 +1,217 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Pillar 0: Default-deny global safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reusable hardened primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidVisualStyle(style) {
+      return style in [
+        'CINEMATIC_TOLLYWOOD',
+        'MYTHOLOGICAL_EPIC',
+        'WATERCOLOR_STORYBOOK',
+        'NOIR_DRAMA',
+        'MODERN_ANIME'
+      ];
+    }
+
+    function isValidVoiceProfile(profile) {
+      return profile in [
+        'KORE_WARM',
+        'PUCK_DYNAMIC',
+        'CHARON_DEEP',
+        'AOEDE_LYRICAL',
+        'FENRIR_DRAMATIC'
+      ];
+    }
+
+    function isValidCaptionStyle(style) {
+      return style in [
+        'CINEMA_GOLD',
+        'CLEAN_SUBTITLE',
+        'BOLD_KARAOKE'
+      ];
+    }
+
+    function isValidProjectStage(stage) {
+      return stage in [
+        'SCRIPT',
+        'STORYBOARD',
+        'PRODUCING',
+        'RENDERED'
+      ];
+    }
+
+    function isValidCameraMotion(motion) {
+      return motion in [
+        'ZOOM_IN',
+        'ZOOM_OUT',
+        'PAN_LEFT',
+        'PAN_RIGHT',
+        'DRIFT_UP'
+      ];
+    }
+
+    function isValidMood(mood) {
+      return mood in [
+        'DRAMATIC',
+        'SERENE',
+        'EPIC',
+        'EMOTIONAL',
+        'MYSTERIOUS',
+        'JOYFUL'
+      ];
+    }
+
+    function isValidVideoProject(data, userId) {
+      return data.keys().hasAll([
+               'userId', 'title', 'scriptPreview', 'scriptText',
+               'wordCount', 'sceneCount', 'completedVisualsCount', 'completedAudioCount',
+               'visualStyle', 'voiceProfile', 'captionStyle', 'stage',
+               'estimatedDurationSec', 'createdAt', 'updatedAt'
+             ]) &&
+             data.keys().hasOnly([
+               'userId', 'title', 'scriptPreview', 'scriptText',
+               'wordCount', 'sceneCount', 'completedVisualsCount', 'completedAudioCount',
+               'visualStyle', 'voiceProfile', 'captionStyle', 'stage',
+               'estimatedDurationSec', 'createdAt', 'updatedAt'
+             ]) &&
+             data.userId is string && data.userId == userId && data.userId == request.auth.uid &&
+             data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 160 &&
+             data.scriptPreview is string && data.scriptPreview.size() <= 500 &&
+             data.scriptText is string && data.scriptText.size() >= 1 && data.scriptText.size() <= 250000 &&
+             data.wordCount is int && data.wordCount >= 0 && data.wordCount <= 15000 &&
+             data.sceneCount is int && data.sceneCount >= 0 && data.sceneCount <= 400 &&
+             data.completedVisualsCount is int && data.completedVisualsCount >= 0 && data.completedVisualsCount <= 400 &&
+             data.completedAudioCount is int && data.completedAudioCount >= 0 && data.completedAudioCount <= 400 &&
+             data.visualStyle is string && isValidVisualStyle(data.visualStyle) &&
+             data.voiceProfile is string && isValidVoiceProfile(data.voiceProfile) &&
+             data.captionStyle is string && isValidCaptionStyle(data.captionStyle) &&
+             data.stage is string && isValidProjectStage(data.stage) &&
+             data.estimatedDurationSec is int && data.estimatedDurationSec >= 0 && data.estimatedDurationSec <= 36000 &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidStoryScene(data, userId, projectId) {
+      return data.keys().hasAll([
+               'userId', 'projectId', 'sceneIndex', 'titleTelugu', 'speaker',
+               'dialogueTelugu', 'captionLines', 'visualPrompt', 'cameraMotion',
+               'mood', 'voiceDirection', 'durationMs', 'createdAt', 'updatedAt'
+             ]) &&
+             data.keys().hasOnly([
+               'userId', 'projectId', 'sceneIndex', 'titleTelugu', 'speaker',
+               'dialogueTelugu', 'captionLines', 'visualPrompt', 'cameraMotion',
+               'mood', 'voiceDirection', 'durationMs', 'createdAt', 'updatedAt'
+             ]) &&
+             data.userId is string && data.userId == userId && data.userId == request.auth.uid &&
+             data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.projectId is string && data.projectId == projectId && isValidId(data.projectId) &&
+             data.sceneIndex is int && data.sceneIndex >= 0 && data.sceneIndex <= 400 &&
+             data.titleTelugu is string && data.titleTelugu.size() >= 1 && data.titleTelugu.size() <= 200 &&
+             data.speaker is string && data.speaker.size() <= 100 &&
+             data.dialogueTelugu is string && data.dialogueTelugu.size() >= 1 && data.dialogueTelugu.size() <= 4000 &&
+             data.captionLines is list && data.captionLines.size() <= 40 &&
+             (data.captionLines.size() == 0 || data.captionLines[0] is string) &&
+             data.visualPrompt is string && data.visualPrompt.size() >= 1 && data.visualPrompt.size() <= 2000 &&
+             data.cameraMotion is string && isValidCameraMotion(data.cameraMotion) &&
+             data.mood is string && isValidMood(data.mood) &&
+             data.voiceDirection is string && data.voiceDirection.size() <= 300 &&
+             data.durationMs is int && data.durationMs >= 1000 && data.durationMs <= 600000 &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    // User-scoped Telugu Video Projects
+    match /users/{userId}/projects/{projectId} {
+      allow list: if isOwner(userId);
+      allow get: if isOwner(userId) && isValidId(projectId);
+
+      allow create: if isOwner(userId) &&
+                       isValidId(projectId) &&
+                       isValidVideoProject(incoming(), userId);
+
+      allow update: if isOwner(userId) &&
+                       isValidId(projectId) &&
+                       isValidVideoProject(incoming(), userId) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       (
+                         // Action 1: Edit script & creative studio settings
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'title', 'scriptPreview', 'scriptText', 'wordCount',
+                           'visualStyle', 'voiceProfile', 'captionStyle',
+                           'estimatedDurationSec', 'updatedAt'
+                         ]) ||
+                         // Action 2: Update production progress & storyboard counters
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'sceneCount', 'completedVisualsCount', 'completedAudioCount',
+                           'stage', 'estimatedDurationSec', 'updatedAt'
+                         ]) ||
+                         // Action 3: Update style preferences alone
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'visualStyle', 'voiceProfile', 'captionStyle', 'updatedAt'
+                         ])
+                       );
+
+      allow delete: if isOwner(userId) && isValidId(projectId);
+
+      // Storyboard Scenes subcollection under a VideoProject
+      match /scenes/{sceneId} {
+        allow list: if isOwner(userId) && isValidId(projectId);
+        allow get: if isOwner(userId) && isValidId(projectId) && isValidId(sceneId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(projectId) &&
+                         isValidId(sceneId) &&
+                         isValidStoryScene(incoming(), userId, projectId) &&
+                         exists(/databases/$(database)/documents/users/$(userId)/projects/$(projectId));
+
+        allow update: if isOwner(userId) &&
+                         isValidId(projectId) &&
+                         isValidId(sceneId) &&
+                         isValidStoryScene(incoming(), userId, projectId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().projectId == existing().projectId &&
+                         incoming().createdAt == existing().createdAt &&
+                         (
+                           // Action 1: Edit scene dialogue, captions, visual prompt, or direction
+                           incoming().diff(existing()).affectedKeys().hasOnly([
+                             'titleTelugu', 'speaker', 'dialogueTelugu', 'captionLines',
+                             'visualPrompt', 'cameraMotion', 'mood', 'voiceDirection',
+                             'durationMs', 'updatedAt'
+                           ]) ||
+                           // Action 2: Sync measured audio duration after narration generation
+                           incoming().diff(existing()).affectedKeys().hasOnly([
+                             'durationMs', 'updatedAt'
+                           ])
+                         );
+
+        allow delete: if isOwner(userId) && isValidId(projectId) && isValidId(sceneId);
+      }
+    }
+  }
+}

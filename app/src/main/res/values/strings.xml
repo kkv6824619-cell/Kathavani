@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">KathaVani</string>
+    <string name="app_tagline_telugu">కథావాణి • AI తెలుగు వీడియో స్టూడియో</string>
+    <string name="app_subtitle">Transform up to 10,000-word Telugu scripts into cinematic videos with AI clips, dialogue-synced captions, and expressive narration.</string>
+    <string name="sign_in_google">Sign in with Google</string>
+    <string name="signing_in">Signing in…</string>
+    <string name="sign_out">Sign out</string>
+    <string name="nav_studio">Studio</string>
+    <string name="nav_new_script">New Script</string>
+    <string name="empty_projects_title">Your Director\'s Desk is Ready</string>
+    <string name="empty_projects_body">Upload or paste a Telugu script up to 10,000 words to generate AI visual clips, dialogue captions, and human-like narration.</string>
+    <string name="action_create_script">Create Telugu Script</string>
+    <string name="action_upload_script">Upload .TXT Script</string>
+    <string name="action_load_sample">Sample Telugu Story</string>
+    <string name="action_analyze_script">Analyze &amp; Build Storyboard</string>
+    <string name="action_generate_all">Generate All Clips &amp; Voice</string>
+    <string name="action_open_player">Cinema Preview</string>
+    <string name="action_export_mp4">Export Long MP4</string>
+    <string name="action_share_video">Share Video</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="cd_back">Navigate back</string>
+    <string name="cd_hero_banner">KathaVani Telugu AI cinema studio artwork</string>
+    <string name="cd_empty_reels">Cinema clapperboard and golden film reel illustration</string>
+    <string name="cd_scene_visual">AI generated visual frame for scene</string>
+    <string name="cd_play_pause">Play or pause video preview</string>
+    <string name="cd_prev_scene">Previous scene</string>
+    <string name="cd_next_scene">Next scene</string>
+    <string name="cd_toggle_captions">Toggle Telugu captions</string>
+</resources>

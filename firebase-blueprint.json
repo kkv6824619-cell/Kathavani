@@ -1,0 +1,225 @@
+{
+  "entities": {
+    "VideoProject": {
+      "title": "VideoProject",
+      "description": "A user-owned Telugu script-to-video project supporting scripts up to 10,000 words.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated owner UID matching request.auth.uid."
+        },
+        "title": {
+          "type": "string",
+          "description": "Project title in Telugu or English (1 to 160 characters)."
+        },
+        "scriptPreview": {
+          "type": "string",
+          "description": "Short preview snippet of the uploaded Telugu script."
+        },
+        "scriptText": {
+          "type": "string",
+          "description": "Full uploaded or pasted Telugu script text (up to 10,000 words / 250,000 chars)."
+        },
+        "wordCount": {
+          "type": "integer",
+          "description": "Word count of the Telugu script."
+        },
+        "sceneCount": {
+          "type": "integer",
+          "description": "Number of storyboard scenes generated for this project."
+        },
+        "completedVisualsCount": {
+          "type": "integer",
+          "description": "Count of scenes with generated AI visual clips."
+        },
+        "completedAudioCount": {
+          "type": "integer",
+          "description": "Count of scenes with generated Telugu narration audio."
+        },
+        "visualStyle": {
+          "type": "string",
+          "description": "Cinematic visual direction preset for AI clip generation.",
+          "enum": [
+            "CINEMATIC_TOLLYWOOD",
+            "MYTHOLOGICAL_EPIC",
+            "WATERCOLOR_STORYBOOK",
+            "NOIR_DRAMA",
+            "MODERN_ANIME"
+          ]
+        },
+        "voiceProfile": {
+          "type": "string",
+          "description": "Expressive narration voice profile for synchronized Telugu narration.",
+          "enum": [
+            "KORE_WARM",
+            "PUCK_DYNAMIC",
+            "CHARON_DEEP",
+            "AOEDE_LYRICAL",
+            "FENRIR_DRAMATIC"
+          ]
+        },
+        "captionStyle": {
+          "type": "string",
+          "description": "Caption overlay style burned into clips and player.",
+          "enum": [
+            "CINEMA_GOLD",
+            "CLEAN_SUBTITLE",
+            "BOLD_KARAOKE"
+          ]
+        },
+        "stage": {
+          "type": "string",
+          "description": "Current editable production stage of the video project.",
+          "enum": [
+            "SCRIPT",
+            "STORYBOARD",
+            "PRODUCING",
+            "RENDERED"
+          ]
+        },
+        "estimatedDurationSec": {
+          "type": "integer",
+          "description": "Estimated total duration of the generated video in seconds."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() on create."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() on create and update."
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "scriptPreview",
+        "scriptText",
+        "wordCount",
+        "sceneCount",
+        "completedVisualsCount",
+        "completedAudioCount",
+        "visualStyle",
+        "voiceProfile",
+        "captionStyle",
+        "stage",
+        "estimatedDurationSec",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "StoryScene": {
+      "title": "StoryScene",
+      "description": "A single AI-generated storyboard clip with Telugu dialogue, synced captions, visual prompt, and camera motion.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated owner UID matching request.auth.uid."
+        },
+        "projectId": {
+          "type": "string",
+          "description": "Parent project document ID."
+        },
+        "sceneIndex": {
+          "type": "integer",
+          "description": "Zero-based sequential order of this scene clip."
+        },
+        "titleTelugu": {
+          "type": "string",
+          "description": "Scene title in Telugu."
+        },
+        "speaker": {
+          "type": "string",
+          "description": "Character or narrator name speaking the dialogue."
+        },
+        "dialogueTelugu": {
+          "type": "string",
+          "description": "Full Telugu narration or dialogue spoken during this clip."
+        },
+        "captionLines": {
+          "type": "array",
+          "description": "Dialogue-aligned Telugu caption segments displayed sequentially during playback."
+        },
+        "visualPrompt": {
+          "type": "string",
+          "description": "Cinematic English visual generation prompt for this clip."
+        },
+        "cameraMotion": {
+          "type": "string",
+          "description": "Animated Ken Burns camera motion preset.",
+          "enum": [
+            "ZOOM_IN",
+            "ZOOM_OUT",
+            "PAN_LEFT",
+            "PAN_RIGHT",
+            "DRIFT_UP"
+          ]
+        },
+        "mood": {
+          "type": "string",
+          "description": "Emotional atmosphere of the scene.",
+          "enum": [
+            "DRAMATIC",
+            "SERENE",
+            "EPIC",
+            "EMOTIONAL",
+            "MYSTERIOUS",
+            "JOYFUL"
+          ]
+        },
+        "voiceDirection": {
+          "type": "string",
+          "description": "Expressive delivery cues for human-like narration."
+        },
+        "durationMs": {
+          "type": "integer",
+          "description": "Measured or estimated narration duration of this scene in milliseconds."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() on create."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() on create and update."
+        }
+      },
+      "required": [
+        "userId",
+        "projectId",
+        "sceneIndex",
+        "titleTelugu",
+        "speaker",
+        "dialogueTelugu",
+        "captionLines",
+        "visualPrompt",
+        "cameraMotion",
+        "mood",
+        "voiceDirection",
+        "durationMs",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/projects/{projectId}": {
+      "schema": {
+        "$ref": "#/entities/VideoProject"
+      },
+      "description": "User-scoped Telugu script-to-video projects."
+    },
+    "/users/{userId}/projects/{projectId}/scenes/{sceneId}": {
+      "schema": {
+        "$ref": "#/entities/StoryScene"
+      },
+      "description": "Ordered storyboard scenes and dialogue-aligned captions belonging to a VideoProject."
+    }
+  }
+}
